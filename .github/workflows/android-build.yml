@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_SDK_ROOT: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
-      ANDROID_NDK_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-ndk-r25b/android-ndk-r25b
+      ANDROID_NDK_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-ndk-r25b
 
     steps:
     - name: Checkout code
@@ -41,12 +41,11 @@ jobs:
 
     - name: Install Android NDK 25b
       run: |
-        mkdir -p $ANDROID_NDK_HOME
-        cd $(dirname $ANDROID_NDK_HOME)
+        mkdir -p $HOME/.buildozer/android/platform
+        cd $HOME/.buildozer/android/platform
         curl -o ndk.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
         unzip -q ndk.zip
         rm ndk.zip
-        mv android-ndk-r25b $(basename $ANDROID_NDK_HOME)
 
     - name: Build APK
       run: |
