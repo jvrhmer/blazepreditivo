@@ -45,12 +45,17 @@ jobs:
         # Cria manualmente a pasta onde o Buildozer espera encontrar o aidl
         mkdir -p $ANDROID_SDK_ROOT/build-tools/31.0.0
 
-        # Procura o aidl e copia para o local correto
+        # Procura o aidl e copia para o local correto só se precisar
         AIDL_SOURCE=$(find $ANDROID_SDK_ROOT -type f -name aidl | head -n1)
         if [ -n "$AIDL_SOURCE" ]; then
           echo "✅ aidl localizado em: $AIDL_SOURCE"
-          cp "$AIDL_SOURCE" $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
-          chmod +x $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
+          if [ "$AIDL_SOURCE" != "$ANDROID_SDK_ROOT/build-tools/31.0.0/aidl" ]; then
+            cp "$AIDL_SOURCE" $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
+            chmod +x $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
+            echo "✅ aidl copiado para o local esperado."
+          else
+            echo "⚠️ aidl já está no lugar correto, não é necessário copiar."
+          fi
         else
           echo "❌ aidl não encontrado, falha crítica!"
           exit 1
