@@ -42,6 +42,18 @@ jobs:
           "build-tools;31.0.0" \
           "cmdline-tools;latest"
 
+        echo "✅ SDK e Build-tools instalados"
+
+    - name: Check AIDL availability
+      run: |
+        if [ -f "$ANDROID_SDK_ROOT/build-tools/31.0.0/aidl" ]; then
+          echo "✅ AIDL encontrado com sucesso!"
+        else
+          echo "❌ AIDL NÃO ENCONTRADO. Listando conteúdo de build-tools:"
+          ls -l $ANDROID_SDK_ROOT/build-tools/31.0.0
+          exit 1
+        fi
+
     - name: Install Android NDK 25b
       run: |
         mkdir -p $HOME/.buildozer/android/platform
@@ -49,13 +61,6 @@ jobs:
         curl -o ndk.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
         unzip -q ndk.zip
         rm ndk.zip
-
-    - name: Confirm aidl exists
-      run: |
-        if [ ! -f "$ANDROID_SDK_ROOT/build-tools/31.0.0/aidl" ]; then
-          echo "❌ AIDL não encontrado! Abortando."
-          exit 1
-        fi
 
     - name: Build APK
       run: |
