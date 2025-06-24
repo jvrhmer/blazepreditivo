@@ -3,70 +3,59 @@
 # Nome visível no celular
 title = BlazePreditivo
 
-# Nome interno do pacote (sem espaços)
+# Nome interno do pacote
 package.name = blaze_preditivo
 
 # Domínio reverso (pode ser fictício)
 package.domain = org.kivy
 
-# Diretório com o código fonte
+# Código fonte
 source.dir = .
-
-# Extensões de arquivos incluídas no APK
-source.include_exts = py,kv,png,jpg,ttf,xml,md,wav,ogg
-
-# Versão do app
-version = 1.0
 
 # Arquivo principal do app
 entrypoint = blaze_preditivo.py
 
-# Bibliotecas necessárias
+# Extensões incluídas
+source.include_exts = py,kv,png,jpg,ttf,xml,md,wav,ogg
+
+# Versão
+version = 1.0
+
+# Requisitos (Python e libs)
 requirements = python3,kivy,requests,bs4,plyer
 
-# Orientação do app
+# Bootstrap (recomendado para Kivy)
+bootstrap = sdl2
+
+# Tela e orientação
 orientation = portrait
-
-# Tela cheia
 fullscreen = 1
-
-# Ocultar barra de status (opcional)
 android.hide_statusbar = 1
 
-# Permissões necessárias no Android
+# Permissões necessárias
 android.permissions = INTERNET,VIBRATE
 
-# API mínima e alvo (compatível com Android 5.0+ e SDK 31)
+# API mínima e alvo (compatível com GitHub Actions e SDK/NDK configurados)
 android.minapi = 21
 android.api = 31
 android.sdk = 31
 android.ndk_api = 21
 
-# O Buildozer baixa NDK antigo por padrão; você usa o 25b manualmente no GitHub Actions
-# Então não defina a versão aqui — deixe o workflow controlar pelo ANDROID_NDK_HOME
-# Se quiser forçar, descomente e use o caminho:
-# android.ndk_path = /home/runner/.buildozer/android/platform/android-ndk-r25b/android-ndk-r25b
-
-# Arquitetura do dispositivo
+# Arquitetura
 arch = armeabi-v7a
 
-# Nome do APK gerado em modo debug
+# Nome do APK de debug
 android.debug.apk = BlazePreditivo.apk
 
-# Copiar APK para a raiz do projeto após build
+# Copia o APK final para a raiz do projeto após o build
 copy_to_current = 1
 
-# Nível de log (2 = detalhado)
+# Nível de log detalhado (2 = debug completo)
 log_level = 2
 
-# Ícone personalizado (caminho relativo ao projeto)
+# Ícone (opcional, certifique-se de que o caminho exista)
 android.icon = icons/exu_tridente.png
 
-# Evita usar build system antigo
+# Otimizações para build
 use_legacy_setup_py = 1
-
-# Bootstrap recomendado para apps Kivy
-bootstrap = sdl2
-
-# Desativa compilação do .py para .so (mais rápido em debug)
 copy_libs = 1
