@@ -29,8 +29,9 @@ jobs:
         mkdir -p $HOME/.buildozer/android/platform/android-sdk
         cd $HOME/.buildozer/android/platform/android-sdk
         curl -o sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-        unzip sdk.zip -d cmdline-tools
-        mv cmdline-tools cmdline-tools/latest
+        mkdir -p cmdline-tools
+        unzip sdk.zip -d cmdline-tools/temp
+        mv cmdline-tools/temp/cmdline-tools cmdline-tools/latest
         yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=${HOME}/.buildozer/android/platform/android-sdk \
           "platform-tools" "platforms;android-31" "build-tools;31.0.0"
 
