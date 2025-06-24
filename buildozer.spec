@@ -1,65 +1,64 @@
 [app]
 
-# Nome visível no app
+# Nome visível no celular
 title = BlazePreditivo
 
-# Nome do pacote
+# Nome interno do pacote (sem espaços)
 package.name = blaze_preditivo
 
-# Domínio reverso
+# Domínio reverso (pode ser fictício)
 package.domain = org.kivy
 
-# Diretório do código
+# Diretório com o código fonte
 source.dir = .
 
-# Arquivo principal
-entrypoint = blaze_preditivo.py
-
-# Extensões incluídas no APK
+# Extensões de arquivos incluídas no APK
 source.include_exts = py,kv,png,jpg,ttf,xml,md,wav,ogg
 
-# Versão
+# Versão do app
 version = 1.0
 
-# Requisitos do app
+# Arquivo principal do app
+entrypoint = blaze_preditivo.py
+
+# Bibliotecas necessárias
 requirements = python3,kivy,requests,bs4,plyer
 
-# Bootstrap gráfico
-bootstrap = sdl2
-
-# Orientação e tela cheia
+# Orientação do app
 orientation = portrait
+
+# Tela cheia
 fullscreen = 1
+
+# Ocultar barra de status (opcional)
 android.hide_statusbar = 1
 
-# Permissões necessárias
+# Permissões necessárias no Android
 android.permissions = INTERNET,VIBRATE
 
-# Versões mínimas e alvo do Android
+# API mínima do Android (21 = Android 5.0)
 android.minapi = 21
-android.api = 31
-android.sdk = 31
-android.ndk_api = 21
 
-# Nome do APK
+# API alvo (31 = Android 12)
+android.api = 31
+
+# Versão do build-tools usada
+android.build_tools_version = 31.0.0
+
+# NDK (compatível com o GitHub Actions e maioria dos builds)
+android.ndk = 25b
+
+# Arquitetura do dispositivo
+android.arch = armeabi-v7a
+
+# Nome do APK gerado
 android.debug.apk = BlazePreditivo.apk
 
-# Arquitetura suportada
-arch = armeabi-v7a
-
-# Copiar APK para o diretório atual após build
+# Após o build, copie o APK para a raiz
 copy_to_current = 1
 
-# Log detalhado
+# Habilitar logs durante a execução no Android
 log_level = 2
 
-# Ícone do app (verifique se o caminho está certo)
+# Ícone personalizado (se tiver)
 android.icon = icons/exu_tridente.png
-
-# Usa libs em tempo de execução
-copy_libs = 1
-
-# ⚠️ Adição fundamental para apontar SDK/NDK personalizados
-[buildozer]
-android.sdk_path = .buildozer/android/platform/android-sdk
-android.ndk_path = .buildozer/android/platform/android-ndk-r25b
