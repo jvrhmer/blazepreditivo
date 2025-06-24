@@ -29,7 +29,7 @@ jobs:
         pip install --upgrade pip cython
         pip install buildozer
 
-    - name: Install Android SDK and tools
+    - name: Install Android SDK command line tools
       run: |
         mkdir -p $ANDROIDSDK/cmdline-tools
         cd $ANDROIDSDK/cmdline-tools
@@ -38,30 +38,28 @@ jobs:
         rm sdk.zip
         mv cmdline-tools latest
 
+    - name: Accept all Android SDK licenses
+      run: |
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK --licenses
 
+    - name: Install only required SDK packages (platform-tools, platforms, build-tools 31)
+      run: |
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK \
           "platform-tools" \
           "platforms;android-31" \
-          "build-tools;31.0.0" \
-          "cmdline-tools;latest"
+          "build-tools;31.0.0"
 
-        mkdir -p $ANDROIDSDK/build-tools/31.0.0
-
-        AIDL_SOURCE=$(find $ANDROIDSDK -type f -name aidl | head -n1)
-        if [ -n "$AIDL_SOURCE" ]; then
-          echo "✅ aidl localizado em: $AIDL_SOURCE"
-          if [ "$AIDL_SOURCE" != "$ANDROIDSDK/build-tools/31.0.0/aidl" ]; then
-            cp "$AIDL_SOURCE" $ANDROIDSDK/build-tools/31.0.0/aidl
-            chmod +x $ANDROIDSDK/build-tools/31.0.0/aidl
-            echo "✅ aidl copiado para o local esperado."
-          else
-            echo "⚠️ aidl já está no lugar correto, não é necessário copiar."
-          fi
-        else
-          echo "❌ aidl não encontrado, falha crítica!"
+    - name: Verify aidl presence and fix if needed
+      run: |
+        AIDL_PATH=$(find $ANDROIDSDK -name aidl | head -n1)
+        if [ -z "$AIDL_PATH" ]; then
+          echo "Aidl not found, exiting."
           exit 1
         fi
+        mkdir -p $ANDROIDSDK/build-tools/31.0.0
+        cp "$AIDL_PATH" $ANDROIDSDK/build-tools/31.0.0/aidl
+        chmod +x $ANDROIDSDK/build-tools/31.0.0/aidl
+        echo "Aidl fixed in build-tools directory."
 
     - name: Install Android NDK 25b
       run: |
@@ -71,7 +69,7 @@ jobs:
         unzip -q ndk.zip
         rm ndk.zip
 
-    - name: Clean buildozer cache manually
+    - name: Clean buildozer cache
       run: rm -rf .buildozer
 
     - name: Build APK
