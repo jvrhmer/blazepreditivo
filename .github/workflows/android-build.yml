@@ -20,9 +20,19 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y openjdk-8-jdk unzip zip git python3-pip build-essential
-        pip install --upgrade cython pip
+        sudo apt install -y openjdk-11-jdk unzip zip git python3-pip build-essential curl
+        pip install --upgrade pip cython
         pip install buildozer
+
+    - name: Install Android SDK manually
+      run: |
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk
+        cd $HOME/.buildozer/android/platform/android-sdk
+        curl -o sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
+        unzip sdk.zip -d cmdline-tools
+        mv cmdline-tools cmdline-tools/latest
+        yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=${HOME}/.buildozer/android/platform/android-sdk \
+          "platform-tools" "platforms;android-31" "build-tools;31.0.0"
 
     - name: Build APK
       run: |
