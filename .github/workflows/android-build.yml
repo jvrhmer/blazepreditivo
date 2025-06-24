@@ -27,7 +27,7 @@ jobs:
         pip install --upgrade pip cython
         pip install buildozer
 
-    - name: Install Android SDK and required tools
+    - name: Install Android SDK and tools
       run: |
         mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
         cd $ANDROID_SDK_ROOT/cmdline-tools
@@ -42,17 +42,16 @@ jobs:
           "build-tools;31.0.0" \
           "cmdline-tools;latest"
 
-        echo "✅ SDK e Build-tools instalados"
+        chmod +x $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
 
-    - name: Check AIDL availability
+    - name: Verificar AIDL
       run: |
-        if [ -f "$ANDROID_SDK_ROOT/build-tools/31.0.0/aidl" ]; then
-          echo "✅ AIDL encontrado com sucesso!"
-        else
-          echo "❌ AIDL NÃO ENCONTRADO. Listando conteúdo de build-tools:"
+        if [ ! -f "$ANDROID_SDK_ROOT/build-tools/31.0.0/aidl" ]; then
+          echo "❌ AIDL ainda não encontrado! Listando conteúdo da pasta:"
           ls -l $ANDROID_SDK_ROOT/build-tools/31.0.0
           exit 1
         fi
+        echo "✅ AIDL está presente!"
 
     - name: Install Android NDK 25b
       run: |
