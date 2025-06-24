@@ -38,10 +38,8 @@ jobs:
         rm sdk.zip
         mv cmdline-tools latest
 
-        # Aceitar todas as licenças do SDK (importante!)
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK --licenses
 
-        # Instalar as ferramentas necessárias
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK \
           "platform-tools" \
           "platforms;android-31" \
@@ -73,8 +71,8 @@ jobs:
         unzip -q ndk.zip
         rm ndk.zip
 
-    - name: Clean buildozer build
-      run: buildozer android clean
+    - name: Clean buildozer cache manually
+      run: rm -rf .buildozer
 
     - name: Build APK
       run: |
