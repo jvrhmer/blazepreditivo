@@ -36,9 +36,10 @@ jobs:
         rm sdk.zip
         mv cmdline-tools latest
 
-        # Aceitar licenças necessárias
+        # Aceitar licenças importantes do SDK
         yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
 
+        # Instalar plataformas, build-tools 31 e outras ferramentas
         yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
           "platform-tools" \
           "platforms;android-31" \
