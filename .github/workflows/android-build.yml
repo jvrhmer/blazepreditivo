@@ -27,7 +27,7 @@ jobs:
         pip install --upgrade pip cython
         pip install buildozer
 
-    - name: Install Android SDK (cmdline-tools)
+    - name: Install Android SDK (cmdline-tools, build-tools, platforms, aidl)
       run: |
         mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
         cd $ANDROID_SDK_ROOT/cmdline-tools
@@ -36,8 +36,12 @@ jobs:
         rm sdk.zip
         mv cmdline-tools latest
         ln -s $ANDROID_SDK_ROOT/cmdline-tools/latest $ANDROID_SDK_ROOT/tools
+
         yes | $ANDROID_SDK_ROOT/tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
-          "platform-tools" "platforms;android-31" "build-tools;31.0.0"
+          "platform-tools" \
+          "platforms;android-31" \
+          "build-tools;31.0.0" \
+          "cmdline-tools;latest"
 
     - name: Install Android NDK 25b
       run: |
