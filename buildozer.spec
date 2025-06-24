@@ -36,26 +36,37 @@ android.hide_statusbar = 1
 # Permissões necessárias no Android
 android.permissions = INTERNET,VIBRATE
 
-# API mínima do Android (21 = Android 5.0)
+# API mínima e alvo (compatível com Android 5.0+ e SDK 31)
 android.minapi = 21
+android.api = 31
+android.sdk = 31
+android.ndk_api = 21
 
-# API alvo (30 = Android 11)
-android.api = 30
-
-# NDK (compatível com o GitHub Actions e maioria dos builds)
-android.ndk = 21b
+# O Buildozer baixa NDK antigo por padrão; você usa o 25b manualmente no GitHub Actions
+# Então não defina a versão aqui — deixe o workflow controlar pelo ANDROID_NDK_HOME
+# Se quiser forçar, descomente e use o caminho:
+# android.ndk_path = /home/runner/.buildozer/android/platform/android-ndk-r25b/android-ndk-r25b
 
 # Arquitetura do dispositivo
-android.arch = armeabi-v7a
+arch = armeabi-v7a
 
-# Nome do APK gerado
+# Nome do APK gerado em modo debug
 android.debug.apk = BlazePreditivo.apk
 
-# Após o build, copie o APK para a raiz
+# Copiar APK para a raiz do projeto após build
 copy_to_current = 1
 
-# Habilitar logs durante a execução no Android
+# Nível de log (2 = detalhado)
 log_level = 2
 
-# Descomente e configure se quiser ícone personalizado
+# Ícone personalizado (caminho relativo ao projeto)
 android.icon = icons/exu_tridente.png
+
+# Evita usar build system antigo
+use_legacy_setup_py = 1
+
+# Bootstrap recomendado para apps Kivy
+bootstrap = sdl2
+
+# Desativa compilação do .py para .so (mais rápido em debug)
+copy_libs = 1
