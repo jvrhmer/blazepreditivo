@@ -60,9 +60,14 @@ jobs:
       run: |
         AIDL_PATH=$(find $ANDROIDSDK -name aidl | head -n1)
         DEST_PATH="$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl"
-        mkdir -p "$(dirname "$DEST_PATH")"
-        cp "$AIDL_PATH" "$DEST_PATH"
-        chmod +x "$DEST_PATH"
+        if [ "$AIDL_PATH" != "$DEST_PATH" ]; then
+          mkdir -p "$(dirname "$DEST_PATH")"
+          cp "$AIDL_PATH" "$DEST_PATH"
+          chmod +x "$DEST_PATH"
+          echo "AIDL copiado para build-tools."
+        else
+          echo "AIDL já está no lugar correto. Nada a copiar."
+        fi
 
     - name: Limpar cache antigo
       run: rm -rf .buildozer
