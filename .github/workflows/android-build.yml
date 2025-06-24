@@ -36,16 +36,17 @@ jobs:
         rm sdk.zip
         mv cmdline-tools latest
 
+        # Aceitar licenças necessárias
+        yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+
         yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
           "platform-tools" \
           "platforms;android-31" \
           "build-tools;31.0.0" \
           "cmdline-tools;latest"
 
-        # Cria manualmente a pasta onde o Buildozer espera encontrar o aidl
         mkdir -p $ANDROID_SDK_ROOT/build-tools/31.0.0
 
-        # Procura o aidl e copia para o local correto só se precisar
         AIDL_SOURCE=$(find $ANDROID_SDK_ROOT -type f -name aidl | head -n1)
         if [ -n "$AIDL_SOURCE" ]; then
           echo "✅ aidl localizado em: $AIDL_SOURCE"
