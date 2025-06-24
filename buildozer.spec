@@ -22,4 +22,10 @@ android.api = 31
 android.build_tools_version = 31.0.0
 android.ndk = 25b
 
-andro
+android.arch = armeabi-v7a
+android.debug.apk = BlazePreditivo.apk
+
+copy_to_current = 1
+log_level = 2
+
+android.icon = icons/exu_tridente.png
