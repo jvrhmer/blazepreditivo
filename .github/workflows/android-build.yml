@@ -56,10 +56,17 @@ jobs:
           echo "Aidl not found, exiting."
           exit 1
         fi
-        mkdir -p $ANDROIDSDK/build-tools/31.0.0
-        cp "$AIDL_PATH" $ANDROIDSDK/build-tools/31.0.0/aidl
-        chmod +x $ANDROIDSDK/build-tools/31.0.0/aidl
-        echo "Aidl fixed in build-tools directory."
+
+        DEST_PATH="$ANDROIDSDK/build-tools/31.0.0/aidl"
+        mkdir -p "$(dirname "$DEST_PATH")"
+
+        if [ "$AIDL_PATH" != "$DEST_PATH" ]; then
+          cp "$AIDL_PATH" "$DEST_PATH"
+          chmod +x "$DEST_PATH"
+          echo "Aidl fixed in build-tools directory."
+        else
+          echo "Aidl is already in the correct place, no copy needed."
+        fi
 
     - name: Install Android NDK 25b
       run: |
