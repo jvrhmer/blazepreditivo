@@ -16,7 +16,7 @@ jobs:
       ANDROIDBUILDTOOLS: 31.0.0
 
     steps:
-    - name: Checkout code
+    - name: Checkout do código
       uses: actions/checkout@v3
 
     - name: Instalar dependências do sistema
@@ -37,18 +37,18 @@ jobs:
         rm sdk.zip
         mv cmdline-tools latest
 
-    - name: Aceitar licenças do Android SDK
+    - name: Aceitar licenças do SDK
       run: |
-        yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK --licenses
+        yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK --licenses || true
 
-    - name: Instalar build-tools 31.0.0, platform-tools e android-31
+    - name: Instalar SDK 31 e Build Tools 31.0.0
       run: |
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK \
           "platform-tools" \
           "platforms;android-31" \
           "build-tools;31.0.0"
 
-    - name: Baixar e configurar Android NDK 25b manualmente
+    - name: Baixar e configurar Android NDK 25b
       run: |
         mkdir -p $ANDROIDNDK_HOME
         cd $ANDROIDNDK_HOME/..
@@ -56,20 +56,20 @@ jobs:
         unzip -q android-ndk-r25b-linux.zip
         rm android-ndk-r25b-linux.zip
 
-    - name: Garantir AIDL em build-tools
+    - name: Verificar e corrigir aidl se necessário
       run: |
-        AIDL_PATH=$(find $ANDROIDSDK -name aidl | head -n1)
-        DEST_PATH="$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl"
-        if [ "$AIDL_PATH" != "$DEST_PATH" ]; then
+        if [ ! -f "$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl" ]; then
+          AIDL_PATH=$(find $ANDROIDSDK -name aidl | head -n1)
+          DEST_PATH="$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl"
           mkdir -p "$(dirname "$DEST_PATH")"
           cp "$AIDL_PATH" "$DEST_PATH"
           chmod +x "$DEST_PATH"
-          echo "AIDL copiado para build-tools."
+          echo "AIDL copiado manualmente."
         else
-          echo "AIDL já está no lugar correto. Nada a copiar."
+          echo "AIDL já está presente."
         fi
 
-    - name: Limpar cache antigo
+    - name: Limpar cache antigo do Buildozer
       run: rm -rf .buildozer
 
     - name: Compilar APK com Buildozer
