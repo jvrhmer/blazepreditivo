@@ -42,21 +42,18 @@ jobs:
           "build-tools;31.0.0" \
           "cmdline-tools;latest"
 
-    - name: Corrigir posição do AIDL
-      run: |
-        AIDL_PATH="$ANDROID_SDK_ROOT/build-tools/31.0.0/aidl"
-        if [ ! -f "$AIDL_PATH" ]; then
-          echo "AIDL não encontrado. Tentando corrigir..."
-          FOUND_PATH=$(find $ANDROID_SDK_ROOT -name aidl -type f | head -n1)
-          if [ -n "$FOUND_PATH" ]; then
-            echo "Linkando $FOUND_PATH para $AIDL_PATH"
-            ln -s "$FOUND_PATH" "$AIDL_PATH"
-          else
-            echo "❌ AIDL não localizado em lugar nenhum. Abortando."
-            exit 1
-          fi
+        # Cria manualmente a pasta onde o Buildozer espera encontrar o aidl
+        mkdir -p $ANDROID_SDK_ROOT/build-tools/31.0.0
+
+        # Procura o aidl e copia para o local correto
+        AIDL_SOURCE=$(find $ANDROID_SDK_ROOT -type f -name aidl | head -n1)
+        if [ -n "$AIDL_SOURCE" ]; then
+          echo "✅ aidl localizado em: $AIDL_SOURCE"
+          cp "$AIDL_SOURCE" $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
+          chmod +x $ANDROID_SDK_ROOT/build-tools/31.0.0/aidl
         else
-          echo "✅ AIDL já está no lugar certo."
+          echo "❌ aidl não encontrado, falha crítica!"
+          exit 1
         fi
 
     - name: Install Android NDK 25b
