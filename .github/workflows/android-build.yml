@@ -2,81 +2,38 @@ name: Build APK
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      ANDROIDSDK: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
-      ANDROIDNDK_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-ndk-r25b
-      ANDROIDAPI: 31
-      ANDROIDMINAPI: 21
-      ANDROIDBUILDTOOLS: 31.0.0
-
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Instalar dependências do sistema
-      run: |
-        sudo apt update
-        sudo apt install -y openjdk-11-jdk unzip zip git python3-pip build-essential curl
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-setuptools git build-essential libssl-dev libffi-dev python3-dev unzip curl
+          pip3 install --upgrade cython buildozer
 
-    - name: Instalar dependências Python
-      run: |
-        pip install --upgrade pip cython buildozer
+      - name: Download Android command line tools
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+          unzip commandlinetools.zip
+          rm commandlinetools.zip
+          mv cmdline-tools latest
 
-    - name: Baixar e configurar Android SDK cmdline-tools
-      run: |
-        mkdir -p $ANDROIDSDK/cmdline-tools
-        cd $ANDROIDSDK/cmdline-tools
-        curl -o sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-        unzip -q sdk.zip
-        rm sdk.zip
-        mv cmdline-tools latest
+      - name: Accept licenses and install SDK components
+        env:
+          ANDROID_SDK_ROOT: $HOME/.buildozer/android/platform/android-sdk
+        run: |
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
+          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.2" "platform-tools" "platforms;android-33"
 
-    - name: Aceitar licenças do SDK
-      run: |
-        yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK --licenses || true
-
-    - name: Instalar SDK 31 e Build Tools 31.0.0
-      run: |
-        yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK \
-          "platform-tools" \
-          "platforms;android-31" \
-          "build-tools;31.0.0"
-
-    - name: Baixar e configurar Android NDK 25b
-      run: |
-        mkdir -p $ANDROIDNDK_HOME
-        cd $ANDROIDNDK_HOME/..
-        curl -o android-ndk-r25b-linux.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-        unzip -q android-ndk-r25b-linux.zip
-        rm android-ndk-r25b-linux.zip
-
-    - name: Verificar e corrigir aidl se necessário
-      run: |
-        if [ ! -f "$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl" ]; then
-          AIDL_PATH=$(find $ANDROIDSDK -name aidl | head -n1)
-          DEST_PATH="$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl"
-          mkdir -p "$(dirname "$DEST_PATH")"
-          cp "$AIDL_PATH" "$DEST_PATH"
-          chmod +x "$DEST_PATH"
-          echo "AIDL copiado manualmente."
-        else
-          echo "AIDL já está presente."
-        fi
-
-    - name: Limpar cache antigo do Buildozer
-      run: rm -rf .buildozer
-
-    - name: Compilar APK com Buildozer
-      run: buildozer android debug --verbose
-
-    - name: Upload do APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: BlazePreditivo.apk
-        path: bin/*.apk
+      - name: Build APK
+        run: |
+          buildozer android debug
