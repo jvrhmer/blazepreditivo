@@ -26,6 +26,7 @@ jobs:
           unzip commandlinetools.zip
           rm commandlinetools.zip
           mv cmdline-tools latest
+          chmod +x latest/bin/sdkmanager
 
       - name: Accept licenses and install SDK components
         env:
