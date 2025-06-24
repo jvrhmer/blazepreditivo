@@ -7,29 +7,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     env:
-      ANDROIDAPI: 31
-      ANDROIDNDK: 25b
       ANDROIDSDK: ${{ github.workspace }}/.buildozer/android/platform/android-sdk
       ANDROIDNDK_HOME: ${{ github.workspace }}/.buildozer/android/platform/android-ndk-r25b
+      ANDROIDAPI: 31
+      ANDROIDMINAPI: 21
+      ANDROIDBUILDTOOLS: 31.0.0
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
         sudo apt update
         sudo apt install -y openjdk-11-jdk unzip zip git python3-pip build-essential curl
-        pip install --upgrade pip cython
-        pip install buildozer
 
-    - name: Install Android SDK command line tools
+    - name: Install Python dependencies
+      run: |
+        pip install --upgrade pip cython buildozer
+
+    - name: Download and setup Android SDK cmdline-tools
       run: |
         mkdir -p $ANDROIDSDK/cmdline-tools
         cd $ANDROIDSDK/cmdline-tools
@@ -42,48 +41,46 @@ jobs:
       run: |
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK --licenses
 
-    - name: Install only required SDK packages (platform-tools, platforms, build-tools 31)
+    - name: Install SDK platform tools, platform 31 and build-tools 31
       run: |
         yes | $ANDROIDSDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROIDSDK \
           "platform-tools" \
           "platforms;android-31" \
           "build-tools;31.0.0"
 
-    - name: Verify aidl presence and fix if needed
+    - name: Download and setup Android NDK 25b manually
+      run: |
+        mkdir -p $ANDROIDNDK_HOME
+        cd $HOME/.buildozer/android/platform
+        curl -o android-ndk-r25b-linux.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
+        unzip -q android-ndk-r25b-linux.zip
+        rm android-ndk-r25b-linux.zip
+
+    - name: Fix AIDL location
       run: |
         AIDL_PATH=$(find $ANDROIDSDK -name aidl | head -n1)
         if [ -z "$AIDL_PATH" ]; then
           echo "Aidl not found, exiting."
           exit 1
         fi
-
-        DEST_PATH="$ANDROIDSDK/build-tools/31.0.0/aidl"
+        DEST_PATH="$ANDROIDSDK/build-tools/$ANDROIDBUILDTOOLS/aidl"
         mkdir -p "$(dirname "$DEST_PATH")"
-
         if [ "$AIDL_PATH" != "$DEST_PATH" ]; then
           cp "$AIDL_PATH" "$DEST_PATH"
           chmod +x "$DEST_PATH"
           echo "Aidl fixed in build-tools directory."
         else
-          echo "Aidl is already in the correct place, no copy needed."
+          echo "Aidl already in the correct place, no copy needed."
         fi
-
-    - name: Install Android NDK 25b
-      run: |
-        mkdir -p $HOME/.buildozer/android/platform
-        cd $HOME/.buildozer/android/platform
-        curl -o ndk.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-        unzip -q ndk.zip
-        rm ndk.zip
 
     - name: Clean buildozer cache
       run: rm -rf .buildozer
 
-    - name: Build APK
+    - name: Build APK with buildozer
       run: |
-        ANDROIDAPI=31 ANDROIDNDK=25b buildozer android debug --verbose
+        buildozer android debug --verbose
 
-    - name: Upload APK
+    - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: BlazePreditivo.apk
