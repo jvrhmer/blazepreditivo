@@ -3,49 +3,41 @@
 # Nome do seu app
 title = BlazePreditivo
 
-# Nome do pacote - mude para algo seu (inverso do domínio)
+# Nome do pacote
 package.name = blazepreditivo
 package.domain = org.example
 
 # Versão do app
 version = 1.0
 
-# Arquivo principal do seu app
+# Extensões de arquivos a incluir
 source.include_exts = py,png,jpg,kv,atlas,json
 source.dir = .
 
-# Arquivo Python principal
-entrypoint = main.py
+# Arquivo principal
+entrypoint = blaze_preditivo.py
 
-# Permissões extras (se precisar)
-# android.permissions = INTERNET
-
-# Orientação da tela: portrait (vertical)
+# Orientação da tela
 orientation = portrait
 
-# Pacotes Python extras que seu app usa
-requirements = python3,kivy,requests
+# Permissões necessárias
+android.permissions = INTERNET, VIBRATE, RECEIVE_BOOT_COMPLETED
 
-# Para buildozer reconhecer build-tools versão fixa:
+# Bibliotecas Python utilizadas
+requirements = python3,kivy,requests,plyer,beautifulsoup4
+
+# Versões do SDK e Build Tools
 android.sdk = 33
 android.build_tools_version = 33.0.2
 
-# Versão mínima do Android suportada
+# API mínima e alvo
 android.minapi = 21
-
-# Versão target do Android
 android.target = 33
 
-# Permitir tela cheia
+# Tela cheia
 fullscreen = 0
-
-# Versão do NDK (use automático do buildozer)
-# android.ndk = 25b
-
-# Adiciona suporte a OpenGL ES 2.0 (default)
-# android.opengl = es2
 
 [buildozer]
 
-# Local para armazenar os builds
+# Pasta de build
 build_dir = .buildozer
