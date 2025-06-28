@@ -21,38 +21,8 @@ jobs:
           pip3 install --upgrade pip
           pip3 install cython==0.29.36 buildozer
 
-    - name: ⬇️ Baixar Android Command Line Tools
-      run: |
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
-        cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
-        curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-        unzip -q commandlinetools.zip
-        rm commandlinetools.zip
-        mkdir -p latest
-        mv cmdline-tools/cmdline-tools/* latest/
-        chmod +x latest/bin/sdkmanager
-
-
-      - name: 📦 Instalar SDK e aceitar licenças
-        env:
-          ANDROID_SDK_ROOT: $HOME/.buildozer/android/platform/android-sdk
+      - name: ⬇️ Baixar Android Command Line Tools
         run: |
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --licenses
-          $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.2" "platform-tools" "platforms;android-33"
-
-      - name: 📥 Instalar Android NDK 25b
-        run: |
-          cd $HOME/.buildozer/android/platform
-          curl -o android-ndk-r25b-linux.zip https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
-          unzip -q android-ndk-r25b-linux.zip
-          rm android-ndk-r25b-linux.zip
-
-      - name: 🧱 Compilar APK com Buildozer
-        run: |
-          buildozer android debug
-
-      - name: 📤 Enviar APK como artefato
-        uses: actions/upload-artifact@v4
-        with:
-          name: blaze-preditivo-apk
-          path: bin/*.apk
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          curl -o comm
